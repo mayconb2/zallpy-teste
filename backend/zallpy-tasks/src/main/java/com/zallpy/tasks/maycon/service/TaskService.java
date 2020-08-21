@@ -34,4 +34,27 @@ public class TaskService {
 	public Task createTask(Task task) {
 		return taskRepository.save(task);
 	}
+	
+	public ResponseEntity<Task> updateTask(Long id, Task task) {
+		
+		if(!taskRepository.existsById(id)) {
+			ResponseEntity.notFound().build();
+		}
+		
+		task.setId(id);
+		task = taskRepository.save(task);
+		
+		return ResponseEntity.ok(task);
+	}
+
+	public ResponseEntity<Void> deleteTask(Long id) {
+		
+		if(!taskRepository.existsById(id)) {
+			ResponseEntity.notFound().build();
+		}
+		
+		taskRepository.deleteById(id);
+		
+		return ResponseEntity.noContent().build();
+	}
 }
