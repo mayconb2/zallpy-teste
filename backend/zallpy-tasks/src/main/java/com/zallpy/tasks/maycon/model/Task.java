@@ -16,6 +16,9 @@ public class Task {
 	@Column(name = "id", nullable = false, insertable = true, updatable = false)
 	private Long id;
 	
+	@Column(name= "title", length = 50, nullable = false, insertable = true, updatable = true)
+	private String title;
+	
 	@Column(name = "description", length = 255, nullable = true, insertable = true, updatable = true)
 	private String description;
 	
@@ -45,6 +48,14 @@ public class Task {
 
 	public void setStatus(StatusTask status) {
 		this.status = status;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	@Override

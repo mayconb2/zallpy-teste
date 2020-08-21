@@ -3,15 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <title>Teste Zallpy!</title>
 </head>
 <body>
-  <h1 id="title">Desafio Zallpy!</h1>
-  <input type="button" value="Teste" id="btn1" onclick="testarJquery()">
+  <div class="container">
+      <div class="row">
+        <div class="col-md-12 container">
+          <h2 class="text-center">TASKS</h2>
+        </div>
+      </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Titulo</th>
+                        <th>Descrição</th>
+                        <th>Editar</th>
+                        <th>Excluir</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+          <a href="categorias-criar.php" class="btn btn-info btn-block">Crair Nova Task</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- <input type="button" value="Teste" id="btn1" onclick="mostrar_modal()"> -->
   
-  
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <div class="container">
+    <div class="modal fade" id="myModal" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false">		
+        <div class="modal-dialog">
+            <div class="modal-content">				
+                <div class="modal-body">
+                    <table class="table table-responsive">
+                        <thead>
+                            <h3>Informaes de Download</h3>
+                            <hr>
+                            <tr>
+                                <td class="titulo" align="center">Usurio</td>
+                                <td class="titulo" align="center">Data</td>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body-modal">
+                        </tbody>
+                    </table>
+                </div><!--Modal body-->
+                <div class="modal-footer">
+                    <input type="button" value="Fechar" onclick="fechar_modal()">
+                </div><!--Modal footer-->
+            </div><!--Modal content-->
+        </div><!--Modal dialog-->
+    </div>
+</div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script>
+
+    window.addEventListener('load', async () => {
+      getTasks();
+    });
+
+    async function getTasks() {
+      const tasks = await $.ajax({
+                
+                url: "http://localhost:8080/tasks/all",
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type':'application/json'
+                },
+                success: function(data) {
+                return data
+                },
+                error: function(error) {
+                },
+                type: 'GET'
+              });
+      
+      renderTable(tasks);
+      
+            // console.log(tasks);
+    }
+
+    function renderTable(tasks) {
+
+      const tableBody = document.querySelector('#table-body');
+
+      let tableRows = '';
+
+      tasks.map(task => {
+        let taskRow = 
+          `
+            <tr>
+                <td>${task.id}</td>
+                <td>${task.title}</td>
+                <td>${task.description}</td>
+                <td><input type="button" class="btn btn-info" value="Editar"></td>
+                <td><input type="button" class="btn btn-danger" value="Excluir"></td>
+            </tr>     
+          `;
+        
+          tableRows += taskRow;
+      })
+
+      tableBody.innerHTML = tableRows;
+
+    }
+
     async function testarJquery() {
 
       const dados = await $.ajax({
@@ -31,9 +140,17 @@
 
       console.log(dados);
     }
-  
-  </script>
 
+    function fechar_modal() {
+      $('#myModal').modal('hide');
+    }
+
+    async function mostrar_modal() {		
+      $('#myModal').modal('show');
+      // let teste = $('#myModal');
+      // console.log(teste)
+    }
+  </script>
 
 </body>
 </html>
