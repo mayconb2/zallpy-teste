@@ -1,5 +1,9 @@
 package com.zallpy.tasks.maycon.repository;
 
-public class TaskRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.zallpy.tasks.maycon.model.Task;
+
+public interface TaskRepository extends JpaRepository<Task, Long> {
 
 }
