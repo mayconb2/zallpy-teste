@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Zallpy!</title>
+</head>
+<body>
+  <h1 id="title">Desafio Zallpy!</h1>
+  <input type="button" value="Teste" id="btn1" onclick="testarJquery()">
+  
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    async function testarJquery() {
+
+      const dados = await $.ajax({
+                
+          url: "http://localhost:8080/tasks",
+          headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type':'application/json'
+          },
+          success: function(data) {
+          return data
+          },
+          error: function(error) {
+          },
+          type: 'GET'
+      });
+
+      console.log(dados);
+    }
+  
+  </script>
+
+
+</body>
+</html>
