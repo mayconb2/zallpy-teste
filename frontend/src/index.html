@@ -34,17 +34,18 @@
     </div>
     <div class="row">
       <div class="col-md-4">
-          <a href="categorias-criar.php" class="btn btn-info btn-block">Crair Nova Task</a>
+          <input type="button" class="btn btn-info btn-block" onclick="openCreateTaskModal()" value="Criar Nova Task">
       </div>
     </div>
 
   </div>
 
   <div class="container">
-    <div class="modal fade" id="myModal" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false">		
+    <div class="modal fade" id="updateTaskModal" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false">		
         <div class="modal-dialog">
             <div class="modal-content">				
                 <div class="modal-body">
+
                   <div class="row">
                     <div class="col-md-12 container">
                       <h2 id="taskTitle" class="text-center"></h2>
@@ -80,6 +81,41 @@
             </div><!--Modal content-->
         </div><!--Modal dialog-->
     </div>
+</div>
+
+<div class="container">
+  <div class="modal fade" id="createTaskModal" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false">		
+      <div class="modal-dialog">
+          <div class="modal-content">				
+              <div class="modal-body">
+                <div class="row">
+
+                  <div class="col-md-12 container">
+                    <h2 id="createTaskTitle" class="text-center">Nova Task</h2>
+                  </div>
+                </div>
+
+                <form method="post" id="createTaskModal">
+                  <div class="form-group">
+                    <label for="title">Título</label>
+                    <input class="form-control form-control-lg" id="createTitle" type="text">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea class="form-control" id="createDescription" rows="3"></textarea>
+                  </div>
+
+                </form>
+
+              </div><!--Modal body-->
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-success" onclick="createTask()">Salvar</button>
+                  <button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
+              </div><!--Modal footer-->
+          </div><!--Modal content-->
+      </div><!--Modal dialog-->
+  </div>
 </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -128,8 +164,8 @@
                 <td>${task.title}</td>
                 <td>${task.description}</td>
                 <td>${task.status}</td>
-                <td><input type="button" class="btn btn-info" onClick="editTaskWithModal(${task.id})" value="Editar"></td>
-                <td><input type="button" class="btn btn-danger" value="Excluir"></td>
+                <td><input type="button" class="btn btn-info" onClick="openUpdateTaskModal(${task.id})" value="Editar"></td>
+                <td><input type="button" class="btn btn-danger" onClick="deleteTask(${task.id})" value="Excluir"></td>
             </tr>     
           `;
         
@@ -141,11 +177,12 @@
     }
 
     function closeModal() {
-      $('#myModal').modal('hide');
+      $('#updateTaskModal').modal('hide');
+      $('#createTaskModal').modal('hide');
     }
 
-    async function editTaskWithModal(taskId) {		
-      $('#myModal').modal('show');
+    async function openUpdateTaskModal(taskId) {		
+      $('#updateTaskModal').modal('show');
       $('#taskTitle').text('Task ' + taskId)
       $('#id').val(taskId);
 
@@ -168,6 +205,10 @@
       $('#description').val(task.description);
       $('#status').val(task.status).prop('selected', true);
 
+    }
+
+    function openCreateTaskModal() {
+      $('#createTaskModal').modal('show');
     }
 
     async function updateTask(id) {
@@ -202,13 +243,84 @@
           location.reload();
         },
         error: function(error) {
-          alert('Não foi possível atualizar a TASK!');
+          alert('Não foi possível atualizar a Task!');
           closeModal();
         },
         type: 'PUT'
-        
+
       });
       
+    }
+
+    async function createTask() {
+
+      let title = $('#createTitle').val();
+      let description = $('#createDescription').val();
+
+      if(title == '') {
+        alert('Título não pode ser nulo!');
+        return;
+      }
+
+      await $.ajax({
+                
+        url: "http://localhost:8080/tasks/",
+        dataType: 'json',
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type':'application/json'
+        },
+        data: JSON.stringify({
+          title: title,
+          description: description,
+        }),
+
+        success: function(data) {
+          alert('Task criada com sucesso!');
+          closeModal();
+          location.reload();
+        },
+        error: function(error) {
+          alert('Não foi possível criar a Task!');
+          closeModal();
+        },
+        type: 'POST'
+
+      });
+    }
+
+    async function deleteTask(id) {
+
+      if(window.confirm('Deseja deletar esta task? Esta operação não pode ser desfeita!')) {
+
+        await $.ajax({
+                
+          url: "http://localhost:8080/tasks/"+id,
+          dataType: 'json',
+          headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type':'application/json'
+          },
+          data: JSON.stringify({
+            title: title,
+            description: description,
+          }),
+  
+          success: function(data) {
+            alert('Task deletada com sucesso!');
+            closeModal();
+            location.reload();
+          },
+          error: function(error) {
+            alert('Não foi possível deletar a Task!');
+            closeModal();
+          },
+          type: 'DELETE'
+  
+        });
+
+      }
+
     }
 
   </script>
