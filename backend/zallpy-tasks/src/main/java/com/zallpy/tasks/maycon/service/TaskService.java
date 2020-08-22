@@ -25,7 +25,7 @@ public class TaskService {
 		Optional<Task> task = taskRepository.findById(id);
 		
 		if(task.isPresent()) {
-			ResponseEntity.ok(task.get());
+			return ResponseEntity.ok(task.get());
 		}
 		
 		return ResponseEntity.notFound().build();

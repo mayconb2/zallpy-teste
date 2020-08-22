@@ -24,7 +24,7 @@ public class Task {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 30, nullable = true, insertable = true, updatable = true)
-	private StatusTask status = StatusTask.OPEN;
+	private StatusTask status = StatusTask.ABERTA;
 
 	public Long getId() {
 		return id;

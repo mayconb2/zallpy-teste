@@ -10,7 +10,7 @@
   <div class="container">
       <div class="row">
         <div class="col-md-12 container">
-          <h2 class="text-center">TASKS</h2>
+          <h2 class="text-center">Teste Zallpy - TASKS</h2>
         </div>
       </div>
     
@@ -22,6 +22,7 @@
                         <th>Id</th>
                         <th>Titulo</th>
                         <th>Descrição</th>
+                        <th>Status</th>
                         <th>Editar</th>
                         <th>Excluir</th>
                     </tr>
@@ -39,28 +40,42 @@
 
   </div>
 
-  <!-- <input type="button" value="Teste" id="btn1" onclick="mostrar_modal()"> -->
-  
   <div class="container">
     <div class="modal fade" id="myModal" role="dialog" tabindex="-1" data-backdrop="static" data-keyboard="false">		
         <div class="modal-dialog">
             <div class="modal-content">				
                 <div class="modal-body">
-                    <table class="table table-responsive">
-                        <thead>
-                            <h3>Informaes de Download</h3>
-                            <hr>
-                            <tr>
-                                <td class="titulo" align="center">Usurio</td>
-                                <td class="titulo" align="center">Data</td>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body-modal">
-                        </tbody>
-                    </table>
+                  <div class="row">
+                    <div class="col-md-12 container">
+                      <h2 id="taskTitle" class="text-center"></h2>
+                    </div>
+                  </div>
+
+                  <form method="post" id="taskModal">
+                    <input type="hidden" id="id" value="">
+                    <div class="form-group">
+                      <label for="title">Título</label>
+                      <input class="form-control form-control-lg" id="title" type="text">
+                    </div>
+  
+                    <div class="form-group">
+                      <label for="description">Descrição</label>
+                      <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+  
+                    <div class="form-group">
+                      <label for="status">Status</label>
+                      <select class="form-control" id="status">
+                        <option value="ABERTA">ABERTA</option>
+                        <option value="FECHADA">FECHADA</option>
+                      </select>
+                    </div>
+                  </form>
+
                 </div><!--Modal body-->
                 <div class="modal-footer">
-                    <input type="button" value="Fechar" onclick="fechar_modal()">
+                    <button type="button" class="btn btn-success" onclick="updateTask(taskModal.id.value)">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
                 </div><!--Modal footer-->
             </div><!--Modal content-->
         </div><!--Modal dialog-->
@@ -74,6 +89,10 @@
     window.addEventListener('load', async () => {
       getTasks();
     });
+
+    function teste() {
+      alert('teste')
+    }
 
     async function getTasks() {
       const tasks = await $.ajax({
@@ -93,7 +112,6 @@
       
       renderTable(tasks);
       
-            // console.log(tasks);
     }
 
     function renderTable(tasks) {
@@ -109,7 +127,8 @@
                 <td>${task.id}</td>
                 <td>${task.title}</td>
                 <td>${task.description}</td>
-                <td><input type="button" class="btn btn-info" value="Editar"></td>
+                <td>${task.status}</td>
+                <td><input type="button" class="btn btn-info" onClick="editTaskWithModal(${task.id})" value="Editar"></td>
                 <td><input type="button" class="btn btn-danger" value="Excluir"></td>
             </tr>     
           `;
@@ -121,35 +140,77 @@
 
     }
 
-    async function testarJquery() {
-
-      const dados = await $.ajax({
-                
-          url: "http://localhost:8080/tasks",
-          headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Content-Type':'application/json'
-          },
-          success: function(data) {
-          return data
-          },
-          error: function(error) {
-          },
-          type: 'GET'
-      });
-
-      console.log(dados);
-    }
-
-    function fechar_modal() {
+    function closeModal() {
       $('#myModal').modal('hide');
     }
 
-    async function mostrar_modal() {		
+    async function editTaskWithModal(taskId) {		
       $('#myModal').modal('show');
-      // let teste = $('#myModal');
-      // console.log(teste)
+      $('#taskTitle').text('Task ' + taskId)
+      $('#id').val(taskId);
+
+      const task = await $.ajax({
+        
+        url: "http://localhost:8080/tasks/"+taskId,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type':'application/json'
+        },
+        success: function(data) {
+        return data
+        },
+        error: function(error) {
+        },
+        type: 'GET'
+      });
+
+      $('#title').val(task.title);
+      $('#description').val(task.description);
+      $('#status').val(task.status).prop('selected', true);
+
     }
+
+    async function updateTask(id) {
+
+      let title = $('#title').val();
+      let description = $('#description').val();
+      let status = $('#status').val();
+
+      if(title == '') {
+        alert('Título não pode ser nulo!');
+        return;
+      }
+
+      await $.ajax({
+                
+        url: "http://localhost:8080/tasks/"+id,
+        dataType: 'json',
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type':'application/json'
+        },
+        data: JSON.stringify({
+          id: id,
+          title: title,
+          description: description,
+          status: status
+        }),
+
+        success: function(data) {
+          alert('Task atualizada com sucesso!');
+          closeModal();
+          location.reload();
+        },
+        error: function(error) {
+          alert('Não foi possível atualizar a TASK!');
+          closeModal();
+        },
+        type: 'PUT'
+        
+      });
+      
+    }
+
   </script>
 
 </body>
