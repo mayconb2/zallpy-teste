@@ -17,11 +17,13 @@ O objetivo foi criar uma API backend em Java com as operações de CRUD padrão.
 
 ## Organização do Projeto
 
-No Backend foi utilizado Java com Spring Boot e Spring Data JPA. Ele foi divido em camadas, deixando uma para o modelo (task), uma para o controlador e uma para os serviços. Isso faz com que o código fique mais organizado e fique mais fácil para implementar novas features.
+No Backend foi utilizado Java com Spring Boot e Spring Data JPA. Ele foi divido em camadas, deixando uma para o modelo (task), uma para o controlador e uma para os serviços. Isso faz com que o código fique mais organizado, fácil de manutenção e fácil para implementar novas features.
 
 No Frontend foi utilizado HTML, CSS e JavaScript com Jquery. Foi utilizado Bootstrap para deixar a aplicação um pouco mais bonita.
 
 As requisições para o Backend são feitas com AJAX via Jquery.
+
+Neste repositório você pode encontrar os scripts DDL e DML do banco de dados.
 
 ## Demonstração
 
